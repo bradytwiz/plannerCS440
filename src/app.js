@@ -7,10 +7,10 @@ import {getUsers, getUser, getUserById, createUser, authenticateUser,
         getEvents, getEvent, getUserEvents, createEvent,
         getTypes, getType, createType} from './database.js'
 
-const app = express()
+const app = express();
 
 app.use(cors({ origin: 'http://127.0.0.1:5500', credentials: true }));
-app.use(express.json())
+app.use(express.json());
 
 app.get("/data", async (req, res) => {
     try {
@@ -36,6 +36,7 @@ app.get("/data", async (req, res) => {
     }
 });
 
+// Retrieve user event data
 app.get('/user-events', async (req, res) => {
     const { user_id, date } = req.query;
 
@@ -59,8 +60,7 @@ app.get('/user-events', async (req, res) => {
     }
 });
 
-
-
+// Create user
 app.post('/signup', async (req, res) => {
     try {
         const { userName, email, password } = req.body;
@@ -142,17 +142,17 @@ app.post('/type', async (req, res) => {
     }
 });
 
-// Logout
+// Logout, not implemented
 app.post('/logout', (req, res) => {
     req.session.destroy();
     res.json({ message: "Logged out successfully" });
 });
 
 app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.status(500).send('Something broke!')
-})
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 app.listen(8080, () => {
-    console.log("Server is running on port 8080")
-})
+    console.log("Server is running on port 8080");
+});
