@@ -5,12 +5,15 @@ CREATE DATABASE IF NOT EXISTS scheduler_db;
 USE scheduler_db;
 
 -- create tables for database
+-- now part of user_schema.sql
+/*
 CREATE TABLE IF NOT EXISTS user (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     userName VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
+*/
 
 CREATE TABLE IF NOT EXISTS type (
 	id INT AUTO_INCREMENT PRIMARY KEY,
