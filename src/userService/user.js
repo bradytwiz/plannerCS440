@@ -80,6 +80,26 @@ export async function  getUserById(id) {
 }
 
 
+app.post('/login', async (req, res) => {
+    try {
+        const { userName, password } = req.body;
+        if (!userName || !password) {
+            return res.status(400).json({ error: "Username and password required" });
+        }
+
+        const user = await authenticateUser(userName, password);
+        if (!user) {
+            return res.status(401).json({ error: "Invalid username or password" });
+        }
+
+        // Send user details but exclude the password
+        res.json({ message: "Login successful", user: { id: user.id, userName: user.userName } });
+    } catch (error) {
+        console.error("Login Error:", error);
+        res.status(500).json({ error: "Error logging in" });
+    }
+});
+
 app.listen(5001, () => {
     console.log("Server is running on port 5001");
 });
