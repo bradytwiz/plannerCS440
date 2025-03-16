@@ -79,6 +79,24 @@ export async function  getUserById(id) {
     return rows[0]
 }
 
+app.post('/signup', async (req, res) => {
+    try {
+        const { userName, email, password } = req.body;
+        if (!userName || !email || !password) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        // Hash password using bcryptjs
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await createUser(userName, email, hashedPassword);
+
+        res.status(201).json({ message: "User created successfully", user: newUser });
+    } catch (error) {
+        console.error("Signup Error:", error);
+        res.status(500).json({ error: "Error creating user" });
+    }
+});
 
 app.post('/login', async (req, res) => {
     try {
