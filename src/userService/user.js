@@ -118,6 +118,17 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// Logout, not implemented
+app.post('/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ message: "Logged out successfully" });
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 app.listen(5001, () => {
     console.log("Server is running on port 5001");
 });
