@@ -7,6 +7,11 @@ import bcrypt from 'bcryptjs'
 
 dotenv.config()
 
+const app = express();
+
+app.use(cors({ origin: 'http://127.0.0.1:5001', credentials: true }));
+app.use(express.json());
+
 // pool creation that uses .env file
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
