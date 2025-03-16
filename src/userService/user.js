@@ -73,3 +73,8 @@ export async function  getUserById(id) {
     `, [id])
     return rows[0]
 }
+
+
+app.listen(5001, () => {
+    console.log("Server is running on port 5001");
+});
