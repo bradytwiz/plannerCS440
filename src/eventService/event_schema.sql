@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS event_db;
+
+USE event_db;
 
 
 CREATE TABLE IF NOT EXISTS type (
@@ -14,7 +17,6 @@ CREATE TABLE IF NOT EXISTS event (
     date DATE NOT NULL,
     time TIME,
     user_id INT,
-    FOREIGN KEY (user_id) REFERENCES user(id),
     type_id INT, -- foreign key reference for type table
     FOREIGN KEY (type_id) REFERENCES type(id)
 );
