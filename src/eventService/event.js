@@ -2,7 +2,6 @@ import express from 'express'
 import cors from 'cors'
 import bcrypt from 'bcryptjs'
 import pool from './database.js'
-
 import mysql from 'mysql2'
 import dotenv from 'dotenv'
 import bcrypt from 'bcryptjs'
