@@ -1,0 +1,66 @@
+services:
+  api_gateway:
+    build: ./api_gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - user_service
+      - event_service
+    networks:
+      - microservices_network
+
+  user_service:
+    build: ./user_service
+    ports:
+      - "5001:5001"
+    environment:
+      MYSQL_HOST: user_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: user_db
+    depends_on:
+      - user_db
+    networks:
+      - microservices_network
+
+  user_db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: user_db
+    volumes:
+      - user_db_data:/var/lib/mysql
+    networks:
+      - microservices_network
+
+  event_service:
+    build: ./event_service
+    ports:
+      - "5002:5002" 
+    environment:
+      MYSQL_HOST: event_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: event_db
+    depends_on:
+      - event_db
+    networks:
+      - microservices_network
+
+  event_db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: event_db
+    volumes:
+      - event_db_data:/var/lib/mysql
+    networks:
+      - microservices_network
+
+volumes:
+  user_db_data:
+  event_db_data:
+
+networks:
+  microservices_network:
+    driver: bridge
