@@ -1,9 +1,15 @@
 import express from 'express';
 import cors from 'cors';
+import pool from './db.js';
 import { getEvents, getEvent, getUserEvents, createEvent, getTypes, getType, createType } from './db.js';
 
 const app = express();
-app.use(cors({ origin: 'http://127.0.0.1:5002', credentials: true }));
+app.use(cors({
+    origin: ['http://localhost:5000', 'http://localhost:5001', 'http://localhost:5002', 'http://127.0.0.1:5001'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'User-ID'],
+    credentials: true
+}));
 app.use(express.json());
 
 
@@ -31,6 +37,7 @@ app.get("/data", async (req, res) => {
     }
 });
 
+
 // Retrieve user event data
 app.get('/user-events', async (req, res) => {
     const { user_id, date } = req.query;
@@ -40,14 +47,7 @@ app.get('/user-events', async (req, res) => {
     }
 
     try {
-        const [events] = await pool.query(`
-            SELECT event.id, event.name, event.description, event.time, 
-                   type.importance, type.color 
-            FROM event
-            JOIN type ON event.type_id = type.id
-            WHERE event.user_id = ? AND event.date = ?
-        `, [user_id, date]);
-
+        const events = await getUserEvents(user_id, date);
         res.json({ events });
     } catch (error) {
         console.error("Error fetching events:", error);
@@ -55,6 +55,17 @@ app.get('/user-events', async (req, res) => {
     }
 });
 
+
+// Retrieve all types
+app.get('/types', async (req, res) => {
+    try {
+        const types = await getTypes(); // Fetch types from database
+        res.json({ types });
+    } catch (error) {
+        console.error("Error fetching types:", error);
+        res.status(500).json({ error: "Error retrieving types" });
+    }
+});
 
 // Create Event
 app.post('/event', async (req, res) => {
@@ -78,8 +89,6 @@ app.post('/event', async (req, res) => {
 });
 
 
-
-
 // Create Type
 app.post('/type', async (req, res) => {
     try {
@@ -96,68 +105,8 @@ app.post('/type', async (req, res) => {
     }
 });
 
-// event creation and retrieval functions
-export async function getEvents() {
-    const [rows] = await pool.query("SELECT * FROM event")
-    return rows
-}
-
-export async function  getEvent(id) {
-    const [rows] = await pool.query(`
-    SELECT * 
-    FROM event
-    WHERE id = ?
-    `, [id])
-    return rows[0]
-}
-
-export async function getUserEvents(user_id, date) {
-    const query = `
-        SELECT * FROM event 
-        WHERE user_id = ? AND date = ? 
-        ORDER BY time ASC
-    `;
-    
-    try {
-        console.log("Fetching events for user:", user_id, "on date:", date);
-        const [events] = await pool.query(query, [user_id, date]);
-        console.log("Events retrieved:", events);
-        return events;
-    } catch (error) {
-        console.error("Database error in getUserEvents:", error);
-        throw error;
-    }
-}
-
-export async function createEvent(name, description, date, time, user_id, type_id) {
-    const [result] = await pool.query(`
-    INSERT INTO event (name, description, date, time, user_id, type_id)
-    VALUES (?, ?, ?, ?, ?, ?)
-    `, [name, description, date, time, user_id, type_id])
-    const id = result.insertId
-    return getEvent(id)
-}
-
-// type creation and retrieval functions
-export async function getTypes() {
-    const [rows] = await pool.query("SELECT * FROM type")
-    return rows
-}
-
-export async function  getType(id) {
-    const [rows] = await pool.query(`
-    SELECT * 
-    FROM type
-    WHERE id = ?
-    `, [id])
-    return rows[0]
-}
-
-export async function createType(name, importance, color) {
-    const [result] = await pool.query(`
-    INSERT INTO type (name, importance, color)
-    VALUES (?, ?, ?)
-    `, [name, importance, color])
-    const id = result.insertId
-    return getType(id)
-}
+// set port
+const PORT = process.env.PORT || 5002;
+app.listen(PORT, () => {
+    console.log(`Event Service is running on port ${PORT}`);
+});

@@ -15,9 +15,9 @@ services:
       - "5001:5001"
     environment:
       MYSQL_HOST: user_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: user_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_USER_DB}
     depends_on:
       - user_db
     networks:
@@ -26,10 +26,11 @@ services:
   user_db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: user_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_USER_DB}
     volumes:
       - user_db_data:/var/lib/mysql
+      - ./user_service/user_schema.sql:/docker-entrypoint-initdb.d/user_schema.sql
     networks:
       - microservices_network
 
@@ -39,9 +40,9 @@ services:
       - "5002:5002" 
     environment:
       MYSQL_HOST: event_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: event_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_EVENT_DB}
     depends_on:
       - event_db
     networks:
@@ -50,10 +51,11 @@ services:
   event_db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: event_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_EVENT_DB}
     volumes:
       - event_db_data:/var/lib/mysql
+      - ./event_service/event_schema.sql:/docker-entrypoint-initdb.d/event_schema.sql
     networks:
       - microservices_network
 

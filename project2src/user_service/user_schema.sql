@@ -1,6 +1,3 @@
--- create the database
-CREATE DATABASE IF NOT EXISTS user_db;
-
 -- use scheduler database
 USE user_db;
 

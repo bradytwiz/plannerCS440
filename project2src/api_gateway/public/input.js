@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    fetchTypes();
     checkUserSession();
+    fetchTypes();
     enableSubmitButton();
 });
 
@@ -10,9 +10,9 @@ async function fetchTypes() {
     try {
         const user = JSON.parse(localStorage.getItem("loggedInUser")); // Get logged-in user
 
-        const response = await fetch("http://localhost:8080/data", {
+        const response = await fetch("http://localhost:5002/types", {
             method: "GET",
-            headers: { "User-ID": user ? user.id : "" }, // Send user ID
+            headers: user ? { "User-ID": user.id } : {}, // Only send if user exists
             credentials: "include"
         });
 
@@ -42,28 +42,20 @@ async function fetchTypes() {
     }
 }
 
-
 // Check if user is logged in
 async function checkUserSession() {
     const user = JSON.parse(localStorage.getItem("loggedInUser"));
 
-    const response = await fetch("http://localhost:8080/data", {
-        method: "GET",
-        headers: { "User-ID": user ? user.id : "" },
-    });
-
-    const data = await response.json();
-    const userDisplay = document.getElementById("userDisplay");
-    const submitButton = document.getElementById("submitEvent");
-
-    if (data.user) {
-        userDisplay.textContent = `User: ${data.user.userName}`;
-        submitButton.disabled = false;
-    } else {
-        userDisplay.textContent = "User: Guest";
-        submitButton.disabled = true;
+    if (!user) {
         alert("You must be logged in to submit an event.");
+        document.getElementById("userDisplay").textContent = "User: Guest";
+        document.getElementById("submitEvent").disabled = true;
+        return;
     }
+
+    // Display user info
+    document.getElementById("userDisplay").textContent = `User: ${user.userName}`;
+    document.getElementById("submitEvent").disabled = false;
 }
 
 
@@ -103,7 +95,7 @@ document.getElementById("submitEvent").addEventListener("click", async () => {
         return;
     }
 
-    const response = await fetch("http://localhost:8080/event", {
+    const response = await fetch("http://localhost:5002/event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, description, date, time, type_id, user_id: user.id })
@@ -129,7 +121,7 @@ document.getElementById("submitType").addEventListener("click", async () => {
     }
 
     try {
-        const response = await fetch("http://localhost:8080/type", {
+        const response = await fetch("http://localhost:5002/type", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, color, importance })

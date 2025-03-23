@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/user-events?user_id=${user.id}&date=${selectedDate}`);
+            const response = await fetch(`http://localhost:5002/user-events?user_id=${user.id}&date=${selectedDate}`);
             const data = await response.json();
 
             if (data.events.length === 0) {

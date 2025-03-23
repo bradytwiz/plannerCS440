@@ -29,11 +29,14 @@ export async function  getEvent(id) {
 
 export async function getUserEvents(user_id, date) {
     const query = `
-        SELECT * FROM event 
-        WHERE user_id = ? AND date = ? 
-        ORDER BY time ASC
+        SELECT event.id, event.name, event.description, event.time, 
+               type.importance, type.color 
+        FROM event
+        JOIN type ON event.type_id = type.id
+        WHERE event.user_id = ? AND event.date = ?
+        ORDER BY event.time ASC
     `;
-    
+
     try {
         console.log("Fetching events for user:", user_id, "on date:", date);
         const [events] = await pool.query(query, [user_id, date]);

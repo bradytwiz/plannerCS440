@@ -22,6 +22,12 @@ app.get('/', (req, res) => {
 app.all('/user-service/*', (req, res) => {
     proxy.web(req, res, { target: 'http://user_service:5001' });
 });
+
+// Proxy requests to the event_service
+app.all('/event-service/*', (req, res) => {
+    proxy.web(req, res, { target: 'http://event_service:5002' });
+});
+
 // Start the server
 const PORT = 5000;
 app.listen(PORT, () => {
