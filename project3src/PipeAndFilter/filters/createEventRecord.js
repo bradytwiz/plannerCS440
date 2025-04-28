@@ -7,7 +7,7 @@ export async function createEventRecord(req, res, next) {
 
         const newEvent = await createEvent(name, description, date, time, user_id, type_id);
 
-        req.result = newEvent; // Store created event
+        req.result = newEvent; 
         next();
     } catch (error) {
         next(error);

@@ -7,7 +7,7 @@ export async function createTypeRecord(req, res, next) {
 
         const newType = await createType(name, importance, color);
 
-        req.result = newType; // Store created type
+        req.result = newType; 
         next();
     } catch (error) {
         next(error);
